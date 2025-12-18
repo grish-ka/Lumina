@@ -26,7 +26,9 @@
 // Concept: Helper function to turn Enum IDs into readable text for the logs
 std::string tokenTypeToString(TokenType type) {
     static std::map<TokenType, std::string> typeNames = {
-        {NUMBER, "NUMBER"}, {IDENTIFIER, "IDENTIFIER"}, {PLUS, "PLUS"},
+        {NUMBER, "NUMBER"}, {IDENTIFIER, "IDENTIFIER"},
+        {LET, "LET"}, {PRINT, "PRINT"},
+        {PLUS, "PLUS"},
         {EQUALS, "EQUALS"}, {SEMICOLON, "SEMICOLON"}, {UNKNOWN, "UNKNOWN"},
         {END_OF_FILE, "EOF"}
     };
