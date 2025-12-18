@@ -19,53 +19,54 @@
 //
 
 #include "lexer.h"
+#include "Parser.h"
+#include "ast.h"
 #include <spdlog/spdlog.h>
-#include <vector>
-#include <map>
+#include <iostream>
 
-// Concept: Helper function to turn Enum IDs into readable text for the logs
-std::string tokenTypeToString(TokenType type) {
-    static std::map<TokenType, std::string> typeNames = {
-        {NUMBER, "NUMBER"}, {IDENTIFIER, "IDENTIFIER"},
-        {LET, "LET"}, {PRINT, "PRINT"},
-        {PLUS, "PLUS"},
-        {EQUALS, "EQUALS"}, {SEMICOLON, "SEMICOLON"}, {UNKNOWN, "UNKNOWN"},
-        {END_OF_FILE, "EOF"}
-    };
-    return typeNames[type];
+// Concept: Recursive function to print the tree so you can see if it worked
+void printAST(ASTNode* node, int indent = 0) {
+    if (!node) return;
+
+    std::string space(indent, ' ');
+
+    // Check if the node is a Variable Declaration
+    if (auto v = dynamic_cast<VarDeclStmt*>(node)) {
+        spdlog::info("{} [Variable Declaration] Name: {}", space, v->name);
+        printAST(v->initializer.get(), indent + 4);
+    }
+    // Check if the node is a Number
+    else if (auto n = dynamic_cast<NumberExpr*>(node)) {
+        spdlog::info("{} [Number Literal] Value: {}", space, n->value);
+    }
 }
 
-void runLexerTest() {
-    std::string testInput = "let x = 50 + 10 ;";
+void runParserTest() {
+    // 1. Your test string
+    std::string input = "let x = 50 ;";
+    spdlog::info("--- Starting Parser Test ---");
+    spdlog::info("Input: \"{}\"", input);
 
-    spdlog::info("--- Starting Lexer Test ---");
-    spdlog::info("Input string: \"{}\"", testInput);
+    // 2. Lexical Analysis
+    Lexer lexer(input);
+    std::vector<Token> tokens = lexer.tokenize();
 
-    Lexer testLexer(testInput);
-    std::vector<Token> tokens = testLexer.tokenize();
+    // 3. Syntax Analysis (Parsing)
+    Parser parser(tokens);
+    std::unique_ptr<ASTNode> root = parser.parseStatement();
 
-    // Loop through and log each token found
-    for (const auto& t : tokens) {
-        spdlog::info("Token Found: [Type: {:<10} | Value: {:<5}]",
-                     tokenTypeToString(t.type), t.value);
-    }
-
-    // A simple logic check using spdlog levels
-    if (tokens.size() >= 6 && tokens[3].value == "50") {
-        spdlog::info("RESULT: SUCCESS - Multi-digit number '50' captured correctly.");
+    // 4. Verify results
+    if (root) {
+        spdlog::info("SUCCESS: AST built successfully.");
+        spdlog::info("Tree Structure:");
+        printAST(root.get());
     } else {
-        spdlog::error("RESULT: FAILURE - Number capture failed or token count mismatch!");
+        spdlog::error("FAILURE: Parser returned a null tree.");
     }
 }
 
 int main() {
-    // Set global log level (can be debug, info, warn, error, etc.)
-    // spdlog::set_level(spdlog::level::debug);
-
-    spdlog::info("Lumina Compiler Pipeline Initialized");
-
-    runLexerTest();
-
-    spdlog::info("Lumina Shutdown Cleanly");
+    spdlog::set_level(spdlog::level::debug);
+    runParserTest();
     return 0;
 }

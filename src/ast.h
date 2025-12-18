@@ -1,4 +1,8 @@
 //
+// Created by grishka on 18/12/2025.
+//
+
+//
 //    Copyright 2025 grish-ka
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,39 +18,28 @@
 //    limitations under the License.
 //
 
-#ifndef LEXER_H
-#define LEXER_H
-
+#pragma once
 #include <string>
-#include <vector>
-#include <spdlog/spdlog.h>
+#include <memory>
 
-// 1. Move Token outside the class so main.cpp can see it easily
-enum TokenType {
-    NUMBER, IDENTIFIER,
-    LET, PRINT, // <--- Add your keywords here
-    PLUS, EQUALS, SEMICOLON, UNKNOWN, END_OF_FILE
-};
-
-struct Token {
-    TokenType type;
-    std::string value;
-};
-
-class Lexer {
-private:
-    std::string source;
-    int pos;
-    char current;
-
-    void advance(); // Moves the cursor
-
+// 1. The Base Node: Every part of Lumina is a 'Node'
+class ASTNode {
 public:
-    // 2. FIXED: This constructor takes the string input
-    Lexer(std::string input);
-
-    // 3. The logic that main.cpp calls
-    std::vector<Token> tokenize();
+    virtual ~ASTNode() = default;
 };
 
-#endif
+// 2. Expression Node: For things that have a value (like 50)
+class NumberExpr : public ASTNode {
+public:
+    std::string value;
+    NumberExpr(std::string v) : value(v) {}
+};
+
+// 3. Statement Node: For actions (like let x = 50)
+class VarDeclStmt : public ASTNode {
+public:
+    std::string name;
+    std::unique_ptr<ASTNode> initializer; // This points to a NumberExpr
+    VarDeclStmt(std::string n, std::unique_ptr<ASTNode> init)
+        : name(n), initializer(std::move(init)) {}
+};

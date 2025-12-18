@@ -1,4 +1,8 @@
 //
+// Created by grishka on 18/12/2025.
+//
+
+//
 //    Copyright 2025 grish-ka
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,39 +18,37 @@
 //    limitations under the License.
 //
 
-#ifndef LEXER_H
-#define LEXER_H
-
-#include <string>
+#ifndef LUMINA_PARSER_H
+#define LUMINA_PARSER_H
 #include <vector>
-#include <spdlog/spdlog.h>
 
-// 1. Move Token outside the class so main.cpp can see it easily
-enum TokenType {
-    NUMBER, IDENTIFIER,
-    LET, PRINT, // <--- Add your keywords here
-    PLUS, EQUALS, SEMICOLON, UNKNOWN, END_OF_FILE
-};
+#include "ast.h"
+#include "lexer.h"
 
-struct Token {
-    TokenType type;
-    std::string value;
-};
 
-class Lexer {
+class Parser {
 private:
-    std::string source;
-    int pos;
-    char current;
-
-    void advance(); // Moves the cursor
+    std::vector<Token> tokens;
+    size_t pos = 0;
 
 public:
-    // 2. FIXED: This constructor takes the string input
-    Lexer(std::string input);
+    Parser(std::vector<Token> t);
 
-    // 3. The logic that main.cpp calls
-    std::vector<Token> tokenize();
+    // Looks at the current token
+    Token peek();
+
+    // Moves the cursor forward
+    Token advance();
+
+    // Ensures the code follows the rules
+    void expect(TokenType type, std::string msg);
+
+    std::unique_ptr<ASTNode> parseStatement();
+
+    std::unique_ptr<ASTNode> parseVarDeclaration();
+
+    std::unique_ptr<ASTNode> parsePrimary();
 };
 
-#endif
+
+#endif //LUMINA_PARSER_H

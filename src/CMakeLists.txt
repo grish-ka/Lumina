@@ -29,5 +29,8 @@ endif()
 # ---------------------------------------------------------------------------------------
 add_executable(Lumina main.cpp
         lexer.cpp
-        lexer.h)
+        lexer.h
+        Parser.cpp
+        Parser.h
+        ast.h)
 target_link_libraries(Lumina PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
