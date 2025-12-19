@@ -21,6 +21,9 @@
 #include <vector>
 #include <spdlog/spdlog.h>
 
+#pragma once
+
+
 // 1. Move Token outside the class so main.cpp can see it easily
 enum TokenType {
     NUMBER, IDENTIFIER,

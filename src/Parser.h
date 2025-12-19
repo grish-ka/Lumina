@@ -25,6 +25,7 @@
 #include "ast.h"
 #include "lexer.h"
 
+#pragma once
 
 class Parser {
 private:
