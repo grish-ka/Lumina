@@ -25,19 +25,24 @@
 #include <iostream>
 
 // Concept: Recursive function to print the tree so you can see if it worked
-void printAST(ASTNode* node, int indent = 0) {
+void printTree(ASTNode* node, std::string prefix = "", bool isLast = true) {
     if (!node) return;
 
-    std::string space(indent, ' ');
+    // 1. Draw the current branch
+    // ├── for middle items, └── for the last item in a branch
+    std::cout << prefix << (isLast ? "└── " : "├── ");
 
-    // Check if the node is a Variable Declaration
+    // 2. Identify the Node and print its data
     if (auto v = dynamic_cast<VarDeclStmt*>(node)) {
-        spdlog::info("{} [Variable Declaration] Name: {}", space, v->name);
-        printAST(v->initializer.get(), indent + 4);
+        std::cout << "\033[1;32m[VarDecl]\033[0m name: " << v->name << std::endl;
+
+        // Move to the initializer (the value)
+        // We add to the prefix to draw the vertical line for the next level
+        std::string newPrefix = prefix + (isLast ? "    " : "│   ");
+        printTree(v->initializer.get(), newPrefix, true);
     }
-    // Check if the node is a Number
     else if (auto n = dynamic_cast<NumberExpr*>(node)) {
-        spdlog::info("{} [Number Literal] Value: {}", space, n->value);
+        std::cout << "\033[1;34m[Literal]\033[0m value: " << n->value << std::endl;
     }
 }
 
@@ -49,19 +54,16 @@ void runParserTest() {
 
     // 2. Lexical Analysis
     Lexer lexer(input);
-    std::vector<Token> tokens = lexer.tokenize();
+    auto tokens = lexer.tokenize();
 
     // 3. Syntax Analysis (Parsing)
     Parser parser(tokens);
-    std::unique_ptr<ASTNode> root = parser.parseStatement();
+    auto root = parser.parseStatement();
 
-    // 4. Verify results
     if (root) {
-        spdlog::info("SUCCESS: AST built successfully.");
-        spdlog::info("Tree Structure:");
-        printAST(root.get());
-    } else {
-        spdlog::error("FAILURE: Parser returned a null tree.");
+        std::cout << "\nAST Visualizer:" << std::endl;
+        printTree(root.get()); // Trigger the 'tree' command style
+        std::cout << std::endl;
     }
 }
 
