@@ -1,0 +1,45 @@
+name: Build & Deploy
+
+on:
+  push:
+    tags:
+      - 'v*.*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v4.2.2
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y cmake libspdlog-dev
+
+      - name: Configure and Build
+        run: |
+          # Configure and Build in Release mode
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --config Release --target Lumina -j 3
+
+      - name: Generate Packages
+        # You MUST run cpack from the build directory
+        run: |
+          cd build
+          cpack
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+          # Use wildcards so you don't have to hardcode version numbers
+          files: |
+            build/Lumina
+            build/*.deb
+            build/*.tar.gz
