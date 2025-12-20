@@ -40,6 +40,6 @@ jobs:
           prerelease: false
           # Use wildcards so you don't have to hardcode version numbers
           files: |
-            build/Lumina
+            build/src/Lumina
             build/*.deb
             build/*.tar.gz
