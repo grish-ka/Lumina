@@ -88,7 +88,7 @@ void runParserTest(std::string input) {
 }
 
 int main(int argc, char *argv[]) {
-    argparse::ArgumentParser program("Lumina", "1.0.0.0-Alpha1.2-TEST-BUILD");
+    argparse::ArgumentParser program("Lumina", "1.0.0.0-Alpha1.2");
 
     program.add_argument("file")
       .help("the input file");
