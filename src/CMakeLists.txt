@@ -14,13 +14,22 @@
 #    limitations under the License.
 #
 
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.14)
 project(Lumina CXX)
 
 # --- Dependencies ---
 if(NOT TARGET spdlog)
     find_package(spdlog REQUIRED)
 endif()
+
+
+# fetch latest argparse
+include(FetchContent)
+FetchContent_Declare(
+        argparse
+        GIT_REPOSITORY https://github.com/p-ranav/argparse.git
+)
+FetchContent_MakeAvailable(argparse)
 
 # --- Executable Definition ---
 add_executable(Lumina
@@ -35,6 +44,7 @@ add_executable(Lumina
 target_link_libraries(Lumina PRIVATE
         spdlog::spdlog
         $<$<BOOL:${MINGW}>:ws2_32>
+        argparse
 )
 
 # ---------------------------------------------------------------------------------------

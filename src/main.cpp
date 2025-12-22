@@ -23,6 +23,7 @@
 #include "ast.h"
 #include <spdlog/spdlog.h>
 #include <iostream>
+#include <argparse/argparse.hpp>
 
 // Concept: Recursive function to print the tree so you can see if it worked
 void printTree(ASTNode* node, std::string prefix = "", bool isLast = true) {
@@ -46,9 +47,9 @@ void printTree(ASTNode* node, std::string prefix = "", bool isLast = true) {
     }
 }
 
-void runParserTest() {
+void runParserTest(std::string input) {
     // 1. Your test string
-    std::string input = "let x = 50 ;";
+    // std::string input = "let x = 50 ;";
     spdlog::info("--- Starting Parser Test ---");
     spdlog::info("Input: \"{}\"", input);
 
@@ -67,8 +68,28 @@ void runParserTest() {
     }
 }
 
-int main() {
-    spdlog::set_level(spdlog::level::debug);
-    runParserTest();
+int main(int argc, char *argv[]) {
+    argparse::ArgumentParser program("Lumina", "1.0.0.0-Alpha1.2-TEST-BUILD");
+
+    program.add_argument("file")
+      .help("file");
+      // .scan<'i', int>();
+
+    program.add_argument("--verbose")
+     .help("increase output verbosity")
+     .flag();
+
+    try {
+        program.parse_args(argc, argv);
+    }
+    catch (const std::exception& err) {
+        std::cerr << err.what() << std::endl;
+        std::cerr << program;
+        return 1;
+    }
+    auto input = program.get<std::string>("file");
+    spdlog::info ("input file: {}", input);
+    if (program["--verbose"] == true) { spdlog::set_level(spdlog::level::debug); }
+    runParserTest("let x = 50 ;");
     return 0;
 }
