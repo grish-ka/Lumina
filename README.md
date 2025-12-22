@@ -1,5 +1,8 @@
-# 🌟 Lumina Compiler: AST Tree Visualizer
-![logo](assets/logo.svg)
+<p align="right">
+  <img src="assets/logo.svg" alt="Lumina Logo" width="100">
+</p>
+
+# 🌟 Lumina Compiler
 Lumina is a native C++ compiler project. This stage of the project implements a Recursive Descent Parser and a high-fidelity terminal visualizer that mimics the Linux `tree` utility to display the Abstract Syntax Tree (AST).
 
 ## 🏗️ Technical Architecture
