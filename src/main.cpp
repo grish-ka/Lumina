@@ -24,6 +24,25 @@
 #include <spdlog/spdlog.h>
 #include <iostream>
 #include <argparse/argparse.hpp>
+#include <fstream>
+#include <sstream>
+#include <string>
+
+std::string readFile(const std::string& path) {
+    std::ifstream fileStream(path);
+
+    if (!fileStream.is_open()) {
+        spdlog::error("Lumina: Could not open file at {}", path);
+        return "";
+    }
+
+    // This is the fastest way: stream the file buffer directly into a stringstream
+    std::stringstream buffer;
+    buffer << fileStream.rdbuf();
+
+    spdlog::info("Lumina: Successfully loaded file: {}", path);
+    return buffer.str();
+}
 
 // Concept: Recursive function to print the tree so you can see if it worked
 void printTree(ASTNode* node, std::string prefix = "", bool isLast = true) {
@@ -87,9 +106,10 @@ int main(int argc, char *argv[]) {
         std::cerr << program;
         return 1;
     }
-    auto input = program.get<std::string>("file");
-    spdlog::info ("input file: {}", input);
+    auto file = program.get<std::string>("file");
     if (program["--verbose"] == true) { spdlog::set_level(spdlog::level::debug); }
-    runParserTest("let x = 50 ;");
+    spdlog::debug ("input file: {}", file);
+
+    runParserTest(readFile(file));
     return 0;
 }

@@ -63,7 +63,7 @@ install(TARGETS Lumina
 set(CPACK_PACKAGE_NAME "Lumina")
 set(CPACK_PACKAGE_VENDOR "grish-ka")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lumina AOT Compiler for aarch64")
-set(CPACK_PACKAGE_VERSION "1.0.0.0-Alpha1.1")
+set(CPACK_PACKAGE_VERSION "1.0.0.0-Alpha1.2")
 
 # Package generators: .tar.gz for generic Linux, .deb for Ubuntu/Debian
 set(CPACK_GENERATOR "TGZ;DEB")
